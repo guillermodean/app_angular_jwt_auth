@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const router = Router()
 const jwt = require('jsonwebtoken')
+var ObjectId = require('mongodb').ObjectID;
 
 
 const User = require('../models/user')
@@ -46,10 +47,28 @@ router.post('/tasks', async (req, res) => { //OK
     res.status(200).json({ newTask })
 })
 
+router.delete('/tasks/:id', async (req, res) => {
+    const id = req.params.id
+    const id2 = ('ObjectId(' + id + ')');
+    try {
+        await Tasks.deleteOne({ "_id": ObjectId("6086fab8eac0e2315c16929f") })
+            .then(() => { console.log('borrado'); });
+    } catch (err) {
+        console.log(err);
+    }
+})
 
 router.get('/profile', verifyToken, (req, res) => {
     res.send(req.userId);
 
+})
+
+router.get('tasks/:id', async (req, res) => {
+    const id = req.params.id
+    const id2 = ('ObjectId(' + id + ')');
+    const oneTask = await Tasks.findOne({ "_id" : ObjectId(id)})
+    console.log(oneTask)
+    res.status(200).json(oneTask);
 })
 
 module.exports = router
