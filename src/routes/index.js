@@ -49,10 +49,13 @@ router.post('/tasks', async (req, res) => { //OK
 
 router.delete('/tasks/:id', async (req, res) => {
     const id = req.params.id
-    const id2 = ('ObjectId(' + id + ')');
+    console.log(id)
     try {
-        await Tasks.deleteOne({ "_id": ObjectId("6086fab8eac0e2315c16929f") })
-            .then(() => { console.log('borrado'); });
+        await Tasks.findByIdAndDelete(id)
+            .then(() => { 
+                res.status(200);
+                console.log('borrado')
+                 });
     } catch (err) {
         console.log(err);
     }
@@ -63,10 +66,11 @@ router.get('/profile', verifyToken, (req, res) => {
 
 })
 
-router.get('tasks/:id', async (req, res) => {
+router.get('/tasks/:id', async (req, res) => {
     const id = req.params.id
-    const id2 = ('ObjectId(' + id + ')');
-    const oneTask = await Tasks.findOne({ "_id" : ObjectId(id)})
+    const id2 = ('ObjectId("'+ id +'")');
+    console.log(id2);
+    const oneTask = await Tasks.findById(id).exec()
     console.log(oneTask)
     res.status(200).json(oneTask);
 })
