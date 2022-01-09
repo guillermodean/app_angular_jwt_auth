@@ -1,8 +1,8 @@
 const { Router } = require('express')
 const router = Router()
 const jwt = require('jsonwebtoken')
-const taskCtrl = require ('../Controllers/task.controller')
-const userCtrl = require ('../Controllers/user.controller')
+const taskCtrl = require('../Controllers/task.controller')
+const userCtrl = require('../Controllers/user.controller')
 
 
 router.get('/', (req, res) => res.send('Wellcome'))
@@ -13,17 +13,17 @@ router.post('/signup', userCtrl.signUp)
 
 router.post('/signin', userCtrl.signIn)
 
-
+router.get('/confirmation/:token', userCtrl.confirmation)
 
 // Taks
 
-router.get('/tasks', taskCtrl.getTask )
+router.get('/tasks', taskCtrl.getTask)
 
-router.post('/tasks', taskCtrl.postTask )
+router.post('/tasks', taskCtrl.postTask)
 
 router.delete('/tasks/:id', taskCtrl.deleteTask)
 
-router.get('/tasks/:id', taskCtrl.getOneTask )
+router.get('/tasks/:id', taskCtrl.getOneTask)
 
 router.put('/tasks/:id', taskCtrl.updateTask)
 

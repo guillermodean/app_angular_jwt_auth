@@ -2,17 +2,75 @@ const userCtrl = {}
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const bcrypt = require('bcrypt');
-
+var nodemailer = require('nodemailer');
+EMAIL_SECRET = 'jo5kljñlgfksjaf$52n3kj4l5b'
 //registrarse
 
 userCtrl.signUp = async (req, res) => {
     let { email, password } = req.body;
-    const user = await User.findOne({ email })
+    let user = await User.findOne({ email })
     if (!user) {
         const salt = await bcrypt.genSalt(10);
         password = await bcrypt.hash(password.toString(), salt);
-        const newUser = new User({ email, password })
-        newUser.save();
+        let newUser = new User({ email, password })
+        newUser.save((function (_id) {
+            return function () {
+
+                // your save callback code in here
+            };
+        })(newUser._id));
+        console.log(newUser._id);
+        const emailToken = jwt.sign(
+            {
+                user: newUser._id
+            },
+            EMAIL_SECRET,
+            {
+                expiresIn: '1d'
+            }
+        );
+        console.log('outside ' + emailToken);
+
+        // Crear un token
+
+
+        //enviar mail de confirmacion
+        const url = `http://192.168.1.130:4200/confirmation/${emailToken} `
+        contentHTML = `<h1>User information</h1>
+            <ul>
+                <li>email : ${email} </li>
+                <li>password ${password}</li>
+            </ul>
+            <p>¡Enhorabuena te hemos aceptado en el club! Entra en este enlace para validad tu jodida cuenta:</br> <a href="${url}">${url}</a></p> `;
+
+        // email sender function
+
+        // Definimos el transporter
+        var transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+                user: 'deanorozg@gmail.com',
+                pass: 'o&jPPaF$S8#dHj'
+            },
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
+        var mailOptions = {
+            from: 'APP casa iturrama',
+            to: email,
+            subject: '[Bienvenida a casa] Email de confirmación',
+            html: contentHTML
+        };
+        await transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+                res.send(500, error.message);
+            } else {
+                console.log("Email sent");
+                res.status(200).jsonp(req.body);
+            }
+        });
         const token = jwt.sign({ _id: newUser._id }, 'secretKey')
         res.status(200).json({ token })
 
@@ -26,26 +84,42 @@ userCtrl.signUp = async (req, res) => {
 // logearse
 
 userCtrl.signIn = async (req, res) => {
-    
+
     const { email, password } = req.body;
     const user = await User.findOne({ email })
     if (!user) return res.status(401).send('Correo no existe');
-    console.log(password, user.password);
-    await bcrypt.compare(password, user.password)
-        .then((result) => {
-            if (result == true) {
-                const token = jwt.sign({ _id: user._id }, 'secretKey');
-                res.status(200).json({ token });
-            } else {
-                res.status(404).send('Contraseña incorrecta')
+    if (!user.confirmed) {
+        res.status(401).send('please confirm user')
+    } else {
+        await bcrypt.compare(password, user.password)
+            .then((result) => {
+                if (result == true) {
+                    const token = jwt.sign({ _id: user._id }, 'secretKey');
+                    res.status(200).json({ token });
+                } else {
+                    res.status(404).send('Contraseña incorrecta')
+                }
             }
-            // if (user.password !== password) return 
-            // res.status(401).send('Contraseña no existe')
-
-        }
-        )
+            )
+    }
 }
 
+userCtrl.confirmation = async (req, res) => {
+    console.log('uh baby baby');
+    try {
+        const { user: { id } } = jwt.verify(req.params.token, EMAIL_SECRET)
+        console.log('entra');
+        await User.findByIdAndUpdate(id, { confirmed: true })
+            .then(() => {
+                res.status(200);
+                console.log('confirmado')
 
+            })
+    } catch {
+        res.send('la cagada')
+    }
+    return res.redirect('http://localhost:4200/task')
+
+}
 
 module.exports = userCtrl;

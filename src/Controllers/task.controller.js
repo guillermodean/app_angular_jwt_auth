@@ -1,6 +1,4 @@
 const taskCtrl = {}
-
-const { restart } = require('nodemon');
 const Tasks = require('../models/Tasks')
 
 // Get all tasks
