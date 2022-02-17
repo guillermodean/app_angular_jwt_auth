@@ -3,6 +3,7 @@ const router = Router()
 const jwt = require('jsonwebtoken')
 const taskCtrl = require('../Controllers/task.controller')
 const userCtrl = require('../Controllers/user.controller')
+const weatherCtrl = require ('../Controllers/weather.controller')
 
 
 router.get('/', (req, res) => res.send('Wellcome'))
@@ -26,6 +27,10 @@ router.delete('/tasks/:id', taskCtrl.deleteTask)
 router.get('/tasks/:id', taskCtrl.getOneTask)
 
 router.put('/tasks/:id', taskCtrl.updateTask)
+
+//weather
+
+router.get('/weather',weatherCtrl.getWeather)
 
 // profile
 
