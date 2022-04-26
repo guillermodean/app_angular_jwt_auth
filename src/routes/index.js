@@ -1,9 +1,10 @@
 const { Router } = require('express')
 const router = Router()
 const jwt = require('jsonwebtoken')
+const listaCtrl = require('../Controllers/lista.controller')
 const taskCtrl = require('../Controllers/task.controller')
 const userCtrl = require('../Controllers/user.controller')
-const weatherCtrl = require ('../Controllers/weather.controller')
+const weatherCtrl = require('../Controllers/weather.controller')
 
 
 router.get('/', (req, res) => res.send('Wellcome'))
@@ -30,7 +31,19 @@ router.put('/tasks/:id', taskCtrl.updateTask)
 
 //weather
 
-router.get('/weather',weatherCtrl.getWeather)
+router.get('/weather', weatherCtrl.getWeather)
+
+// Lista de la compra
+
+router.get('/lista', listaCtrl.getLista)
+
+router.get('/lista/:id', listaCtrl.getListaone)
+
+router.put('/lista/:id', listaCtrl.putListaone)
+
+router.post('/lista', listaCtrl.addListaone)
+
+router.delete('/lista/:id', listaCtrl.delListaone)
 
 // profile
 
@@ -39,7 +52,7 @@ router.get('/profile', verifyToken, (req, res) => {
 
 })
 
-module.exports = router
+
 
 function verifyToken(req, res, next) {
 
@@ -55,3 +68,4 @@ function verifyToken(req, res, next) {
     req.userId = payload._id;  //creo una propiedad en req y le paso el valor id de payload
     next();
 };
+module.exports = router
