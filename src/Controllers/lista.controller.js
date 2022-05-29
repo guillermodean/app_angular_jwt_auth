@@ -9,7 +9,8 @@ listaCtrl.getLista = async (req,res)=>{
 }
 // add producto
 listaCtrl.addListaone = async (req,res)=>{
-    const { Producto,Marca,Cantidad } = req.body;
+    const { Producto,Marca,Cantidad,Check } = req.body;
+    console.log(Producto,Marca,Cantidad,Check);
     const newLista = new Lista({ Producto,Marca,Cantidad,Check})
     await newLista.save()
         .then(() => {
