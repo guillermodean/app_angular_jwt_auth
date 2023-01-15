@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 
 
-mongoose.connect('mongodb+srv://Guillermo:Ragnarson11@cluster0.tqdy8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+mongoose.connect('mongodb://192.168.1.181:27017/angular-auth', {
     useNewUrlParser: true, 
     useUnifiedTopology: true,
     useFindAndModify: false,

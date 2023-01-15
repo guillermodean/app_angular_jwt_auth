@@ -3,7 +3,12 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
-EMAIL_SECRET = 'jo5kljñlgfksjaf$52n3kj4l5b'
+require('dotenv').config()
+
+const emailout = process.env.USER
+const passwordout = process.env.PSW
+const EMAIL_SECRET = process.env.EMAIL_SECRET
+
 //registrarse
 
 userCtrl.signUp = async (req, res) => {
@@ -24,7 +29,7 @@ userCtrl.signUp = async (req, res) => {
             {
                 user: newUser._id
             },
-            EMAIL_SECRET,
+            String(EMAIL_SECRET),
             {
                 expiresIn: '1d'
             }
@@ -35,7 +40,7 @@ userCtrl.signUp = async (req, res) => {
 
 
         //enviar mail de confirmacion
-        const url = `http://192.168.1.130:4200/confirmation/${emailToken} `
+        const url = `http://192.168.1.181:4200/confirmation/${emailToken} `
         contentHTML = `<h1>User information</h1>
             <ul>
                 <li>email : ${email} </li>
@@ -47,17 +52,18 @@ userCtrl.signUp = async (req, res) => {
 
         // Definimos el transporter
         var transporter = nodemailer.createTransport({
-            service: 'Gmail',
+            host: "smtp-mail.outlook.com",
+            port: 587,
             auth: {
-                user: 'deanorozg@gmail.com',
-                pass: 'o&jPPaF$S8#dHj'
+                user: emailout ,
+                pass: passwordout
             },
             tls: {
                 rejectUnauthorized: false
             }
         });
         var mailOptions = {
-            from: 'APP casa iturrama',
+            from: emailout,
             to: email,
             subject: '[Bienvenida a casa] Email de confirmación',
             html: contentHTML

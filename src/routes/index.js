@@ -6,6 +6,8 @@ const taskCtrl = require('../Controllers/task.controller')
 const userCtrl = require('../Controllers/user.controller')
 const weatherCtrl = require('../Controllers/weather.controller')
 
+require('dotenv').config()
+
 
 router.get('/', (req, res) => res.send('Wellcome'))
 
